@@ -42,8 +42,16 @@ body {
   z-index: 0;
 }
 @keyframes floatPetal {
-  0% { transform: translateY(-40px) rotate(0deg); opacity: 0.6; }
-  100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+  from {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.6;
+  }
+
+  to {
+    transform: translateY(calc(100vh + 300px)) rotate(360deg);
+    opacity: 0;
+  }
+}
 }
 .card {
   background: #ffffff;
@@ -276,15 +284,28 @@ h1 {
 
   // Petals
   ['🌸','🌷','💮','🌺'].forEach(p => {
-    for (let j = 0; j < 5; j++) {
-      const d = document.createElement('div');
-      d.className = 'petal';
-      d.textContent = p;
-      d.style.left = Math.random() * 100 + 'vw';
-      d.style.animationDuration = (8 + Math.random() * 12) + 's';
-      d.style.animationDelay = (Math.random() * 14) + 's';
-      d.style.fontSize = (0.8 + Math.random() * 0.8) + 'rem';
-      document.getElementById('petals').appendChild(d);
+  for (let j = 0; j < 5; j++) {
+    const d = document.createElement('div');
+
+    d.className = 'petal';
+    d.textContent = p;
+
+    d.style.left = Math.random() * 100 + 'vw';
+
+    // Começa acima da tela
+    d.style.top = (-50 - Math.random() * 200) + 'px';
+
+    d.style.animationDuration =
+      (8 + Math.random() * 12) + 's';
+
+    // Delay negativo faz parecer que já estão caindo
+    d.style.animationDelay =
+      (-Math.random() * 20) + 's';
+
+    d.style.fontSize =
+      (0.8 + Math.random() * 0.8) + 'rem';
+
+    document.getElementById('petals').appendChild(d);
     }
   });
 
@@ -364,11 +385,20 @@ h1 {
   // ─── Botão Não: foge suavemente, pode sair 100% da tela, inclicável ───
   const btnNao = document.getElementById('btnNao');
 
-  // Posição inicial ao lado do Sim
-  let tx = window.innerWidth / 2 + 110;
-  let ty = window.innerHeight / 2 + 55;
+  // Posiciona ao lado do botão Sim quando a página carregar
+setTimeout(() => {
+  const btnSim = document.querySelector('.btn-yes');
+  const rect = btnSim.getBoundingClientRect();
+
+  tx = rect.right + 15;
+  ty = rect.top;
+
   btnNao.style.left = tx + 'px';
-  btnNao.style.top  = ty + 'px';
+  btnNao.style.top = ty + 'px';
+}, 100);
+
+let tx = 0;
+let ty = 0;
 
   // Rastreia posição real do mouse continuamente
   let mx = -999, my = -999;
