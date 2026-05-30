@@ -1,0 +1,415 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #faf8f6;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  padding: 2rem;
+  text-align: center;
+  animation: fadeIn 0.5s ease;
+  position: relative;
+}
+.screen.active { display: flex; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.petal {
+  position: fixed;
+  opacity: 0.5;
+  animation: floatPetal linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes floatPetal {
+  0% { transform: translateY(-40px) rotate(0deg); opacity: 0.6; }
+  100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
+.card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 2.5rem 2rem 2rem;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.06);
+  position: relative;
+  z-index: 1;
+}
+.cat-box {
+  width: 120px; height: 120px;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 0 auto 1.4rem;
+  background: #f0ede8;
+}
+.cat-box img { width: 100%; height: 100%; object-fit: cover; }
+h1 {
+  font-family: 'DM Serif Display', serif;
+  color: #2d1a0e;
+  font-size: 1.7rem;
+  margin-bottom: 0.4rem;
+  line-height: 1.3;
+}
+.sub {
+  color: #9a7e6e;
+  font-size: 0.95rem;
+  margin-bottom: 1.6rem;
+  font-style: italic;
+}
+.btn-yes {
+  background: #f2b8c0;
+  color: #5a1a2a;
+  border: none;
+  border-radius: 50px;
+  padding: 0.75rem 2.4rem;
+  font-size: 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  display: inline-block;
+}
+.btn-yes:hover { background: #e899a8; transform: scale(1.04); }
+
+/* Botão não — flutua livremente, pode sair da tela */
+.btn-no {
+  background: #e8e2dc;
+  color: #7a6a60;
+  border: none;
+  border-radius: 50px;
+  padding: 0.75rem 2.2rem;
+  font-size: 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  cursor: not-allowed;
+  position: fixed;
+  z-index: 999;
+  transition: left 0.45s cubic-bezier(0.16, 1, 0.3, 1), top 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  pointer-events: none; /* inclicável mas visível */
+}
+
+.cal-title { font-family: 'DM Serif Display', serif; color: #2d1a0e; font-size: 1.5rem; margin-bottom: 0.3rem; }
+.cal-sub { color: #9a7e6e; font-size: 0.9rem; margin-bottom: 1.2rem; font-style: italic; }
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 0.6rem; }
+.cal-head { font-size: 0.72rem; color: #b09880; font-weight: 600; padding: 4px 0; text-align: center; }
+.cal-day {
+  aspect-ratio: 1;
+  display: flex; align-items: center; justify-content: center; flex-direction: column;
+  border-radius: 10px;
+  font-size: 0.8rem; font-weight: 500;
+  cursor: pointer; color: #5a3a2a;
+  background: #faf7f4;
+  border: 1.5px solid transparent;
+  transition: background 0.15s, transform 0.1s;
+  gap: 1px;
+}
+.cal-day:hover { background: #f2d8dc; transform: scale(1.1); }
+.cal-day.special {
+  background: #f2b8c0; color: #5a1a2a; font-weight: 700;
+  border-color: #e899a8;
+  animation: pulse 1.4s infinite;
+}
+.cal-day.special .star { font-size: 0.55rem; }
+.cal-day.empty { background: transparent; cursor: default; border-color: transparent; }
+.cal-day.selected-day { outline: 2.5px solid #c8715b; }
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(242,184,192,0.5); }
+  50% { box-shadow: 0 0 0 6px rgba(242,184,192,0); }
+}
+.hint { font-size: 0.75rem; color: #c48899; margin-top: 0.3rem; font-style: italic; }
+.time-select {
+  width: 100%;
+  border: 1.5px solid #f2b8c0;
+  border-radius: 12px;
+  padding: 0.7rem 1rem;
+  font-size: 0.95rem;
+  font-family: 'DM Sans', sans-serif;
+  color: #5a3a2a;
+  background: #fff8f8;
+  margin-top: 0.6rem;
+  margin-bottom: 1rem;
+  appearance: none;
+  cursor: pointer;
+  outline: none;
+}
+.time-select:focus { border-color: #e899a8; }
+.food-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 1rem 0;
+}
+.food-item {
+  background: #faf7f4;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  padding: 1rem 0.5rem 0.7rem;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s, border-color 0.15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.food-item:hover { background: #f2d8dc; transform: scale(1.04); }
+.food-item.selected { background: #f2b8c0; border-color: #e899a8; }
+.food-icon { font-size: 1.9rem; }
+.food-label { font-size: 0.8rem; font-weight: 600; color: #5a3a2a; }
+.final-img {
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 1.2rem;
+  display: block;
+  border: 3px solid #f2b8c0;
+}
+.hearts-float {
+  margin-top: 1rem; font-size: 1.2rem;
+  letter-spacing: 3px;
+  animation: heartbeat 1.5s ease infinite;
+}
+@keyframes heartbeat {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
+.ps { font-size: 0.78rem; color: #b09880; margin-top: 1.2rem; font-style: italic; }
+.confetti-wrap { position: fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:9999; }
+.conf { position: absolute; animation: confFall linear forwards; }
+@keyframes confFall {
+  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(540deg); opacity: 0; }
+}
+</style>
+</head>
+<body>
+
+<div id="petals"></div>
+
+<!-- S1 -->
+<div id="s1" class="screen active">
+  <div class="card">
+    <div class="cat-box">
+      <img src="https://cataas.com/cat?width=240&height=240" alt="gatinho"
+           onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3.5rem;\'>🐱</div>'">
+    </div>
+    <h1>🌸 Aceita jantar comigo?</h1>
+    <p class="sub">sem pressão... mas tipo, aceita</p>
+    <button class="btn-yes" onclick="goTo('s2')">Sim 💕</button>
+  </div>
+</div>
+
+<!-- Botão Não — inclicável, foge pra fora da tela -->
+<button class="btn-no" id="btnNao">Não 😅</button>
+
+<!-- S2 -->
+<div id="s2" class="screen">
+  <div class="card">
+    <div style="font-size:2rem;margin-bottom:0.8rem;">📅🐾</div>
+    <div class="cal-title">Então... quando você tá livre?</div>
+    <p class="cal-sub">Junho de 2026</p>
+    <div class="calendar-grid" id="cal"></div>
+    <p class="hint">⭐ = data muito especial, por favor escolhe essa</p>
+    <div style="margin-top:1.2rem; text-align:left;">
+      <label style="font-size:0.85rem;color:#9a7e6e;font-style:italic;">Que horas? 🕐</label>
+      <select class="time-select" id="horarioSelect">
+        <option value="">Escolhe um horário...</option>
+        <option value="17:00">17:00 — a gente come com os aposentados</option>
+        <option value="18:00">18:00 — essa é a resposta certa tbh</option>
+        <option value="19:00">19:00 — tô com fome só de pensar</option>
+        <option value="20:00">20:00 — a gente come jantar ou café da manhã?</option>
+      </select>
+    </div>
+    <button class="btn-yes" onclick="proximoParaComida()" style="margin-top:0.5rem;width:100%;">Próximo →</button>
+  </div>
+</div>
+
+<!-- S3 -->
+<div id="s3" class="screen">
+  <div class="card">
+    <h1 style="font-size:1.4rem;">O que a gente vai comer? 🍽️✨</h1>
+    <p class="sub">pode escolher mais de um 😏</p>
+    <div class="food-grid">
+      <div class="food-item" onclick="toggleFood(this,'Pizza')"><span class="food-icon">🍕</span><span class="food-label">Pizza</span></div>
+      <div class="food-item" onclick="toggleFood(this,'Hambúrguer')"><span class="food-icon">🍔</span><span class="food-label">Hambúrguer</span></div>
+      <div class="food-item" onclick="toggleFood(this,'Churrasco')"><span class="food-icon">🥩</span><span class="food-label">Churrasco</span></div>
+      <div class="food-item" onclick="toggleFood(this,'Japonês')"><span class="food-icon">🍣</span><span class="food-label">Japonês</span></div>
+      <div class="food-item" onclick="toggleFood(this,'Italiano')"><span class="food-icon">🍝</span><span class="food-label">Italiano</span></div>
+      <div class="food-item" onclick="toggleFood(this,'Árabe')"><span class="food-icon">🥙</span><span class="food-label">Árabe</span></div>
+    </div>
+    <button class="btn-yes" onclick="confirmar()" style="width:100%;margin-top:0.3rem;">Confirmar 💕</button>
+  </div>
+</div>
+
+<!-- S4 -->
+<div id="s4" class="screen">
+  <div class="card">
+    <img class="final-img" src="https://cataas.com/cat/cute?width=300&height=300" alt="gatinho"
+         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22><circle cx=%2260%22 cy=%2260%22 r=%2260%22 fill=%22%23f2b8c0%22/><text y=%2280%22 x=%2260%22 text-anchor=%22middle%22 font-size=%2260%22>🐱</text></svg>'">
+    <h1 style="font-size:1.4rem;">Que bom que você não disse não. 🐾</h1>
+    <p class="sub" style="margin-bottom:0.6rem;">Estarei lá para te buscar!</p>
+    <p id="msgFinal" style="color:#5a1a2a;font-weight:600;font-size:0.95rem;margin-bottom:0.5rem;line-height:1.6;"></p>
+    <p style="color:#7a5a4a;font-size:0.9rem;line-height:1.6;">Vista sua melhor roupa e capricha no perfume! 🌸<br>Vai ser incrível, eu garanto ✨</p>
+    <div class="hearts-float">🌹🌹🌹</div>
+    <p class="ps">P.S. Fiz esse site durante o almoço pra você. Sem pressão mesmo.</p>
+  </div>
+</div>
+
+<div class="confetti-wrap" id="confWrap"></div>
+
+<script>
+  emailjs.init('CzVMwgXVXz9fOU8lj');
+
+  // Petals
+  ['🌸','🌷','💮','🌺'].forEach(p => {
+    for (let j = 0; j < 5; j++) {
+      const d = document.createElement('div');
+      d.className = 'petal';
+      d.textContent = p;
+      d.style.left = Math.random() * 100 + 'vw';
+      d.style.animationDuration = (8 + Math.random() * 12) + 's';
+      d.style.animationDelay = (Math.random() * 14) + 's';
+      d.style.fontSize = (0.8 + Math.random() * 0.8) + 'rem';
+      document.getElementById('petals').appendChild(d);
+    }
+  });
+
+  // Calendar — Junho 2026 começa na segunda (índice 1)
+  const cal = document.getElementById('cal');
+  ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].forEach(h => {
+    const d = document.createElement('div');
+    d.className = 'cal-head'; d.textContent = h;
+    cal.appendChild(d);
+  });
+  let diaSelecionado = null;
+  const e = document.createElement('div'); e.className = 'cal-day empty'; cal.appendChild(e);
+  for (let d = 1; d <= 30; d++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-day' + (d === 5 ? ' special' : '');
+    cell.innerHTML = d + (d === 5 ? '<span class="star">⭐</span>' : '');
+    cell.addEventListener('click', () => {
+      document.querySelectorAll('.cal-day').forEach(c => c.classList.remove('selected-day'));
+      cell.classList.add('selected-day');
+      diaSelecionado = d;
+    });
+    cal.appendChild(cell);
+  }
+
+  let foodSelected = new Set();
+  function toggleFood(el, nome) {
+    foodSelected.has(nome) ? (foodSelected.delete(nome), el.classList.remove('selected'))
+                           : (foodSelected.add(nome), el.classList.add('selected'));
+  }
+
+  function goTo(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('btnNao').style.display = 'none';
+    confetes();
+  }
+
+  function proximoParaComida() {
+    if (!diaSelecionado) { alert('Escolhe um dia no calendário! 📅'); return; }
+    if (!document.getElementById('horarioSelect').value) { alert('Escolhe um horário também! 🕐'); return; }
+    goTo('s3');
+  }
+
+  function confirmar() {
+    if (foodSelected.size === 0) { alert('Escolhe pelo menos uma opção! 🍽️'); return; }
+    const horario = document.getElementById('horarioSelect').value;
+    const comida = [...foodSelected].join(', ');
+    document.getElementById('msgFinal').textContent =
+      `📅 Dia ${diaSelecionado} de junho de 2026 às ${horario}\n🍽️ Vai rolar: ${comida}`;
+    emailjs.send('service_12jzg86', 'template_xlqeuz6', {
+      data: `${diaSelecionado} de junho de 2026`,
+      horario,
+      comida
+    }).catch(err => console.warn('Erro email:', err));
+    goTo('s4');
+    confetes();
+  }
+
+  function confetes() {
+    const cores = ['#f2b8c0','#e8d5c0','#d4a0b0','#f9e0e6','#c8715b','#f5c6c6'];
+    const wrap = document.getElementById('confWrap');
+    for (let i = 0; i < 55; i++) {
+      const p = document.createElement('div');
+      p.className = 'conf';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.background = cores[Math.floor(Math.random() * cores.length)];
+      p.style.animationDuration = (1.5 + Math.random() * 2.5) + 's';
+      p.style.animationDelay = (Math.random() * 0.6) + 's';
+      const sz = 6 + Math.random() * 8;
+      p.style.width = p.style.height = sz + 'px';
+      p.style.borderRadius = Math.random() > 0.5 ? '50%' : '3px';
+      wrap.appendChild(p);
+      setTimeout(() => p.remove(), 4500);
+    }
+  }
+
+  // ─── Botão Não: foge suavemente, pode sair 100% da tela, inclicável ───
+  const btnNao = document.getElementById('btnNao');
+
+  // Posição inicial ao lado do Sim
+  let tx = window.innerWidth / 2 + 110;
+  let ty = window.innerHeight / 2 + 55;
+  btnNao.style.left = tx + 'px';
+  btnNao.style.top  = ty + 'px';
+
+  // Rastreia posição real do mouse continuamente
+  let mx = -999, my = -999;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  document.addEventListener('touchmove', e => {
+    mx = e.touches[0].clientX;
+    my = e.touches[0].clientY;
+  }, { passive: true });
+
+  // Loop de física: botão foge suavemente a cada frame
+  function loop() {
+    const bw = btnNao.offsetWidth  || 110;
+    const bh = btnNao.offsetHeight || 44;
+    const bx = tx + bw / 2;
+    const by = ty + bh / 2;
+    const dist = Math.hypot(mx - bx, my - by);
+    const raio = 160;
+
+    if (dist < raio && dist > 0) {
+      const ang = Math.atan2(by - my, bx - mx);
+      const forca = ((raio - dist) / raio) * 260;
+      let nx = tx + Math.cos(ang) * forca;
+      let ny = ty + Math.sin(ang) * forca;
+
+      // Sem limites — deixa sair da tela completamente
+      tx = nx;
+      ty = ny;
+      btnNao.style.transition = 'left 0.45s cubic-bezier(0.16,1,0.3,1), top 0.45s cubic-bezier(0.16,1,0.3,1)';
+      btnNao.style.left = tx + 'px';
+      btnNao.style.top  = ty + 'px';
+    }
+
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+</script>
+</body>
+</html>
