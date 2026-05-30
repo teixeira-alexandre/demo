@@ -55,12 +55,7 @@ body {
   position: relative;
   z-index: 1;
 }
-.cat-box {
-  width: 120px; height: 120px;
-  border-radius: 20px;
-  overflow: hidden;
-  margin: 0 auto 1.4rem;
-  background: #f0ede8;
+.cat-box img,
 }
 .cat-box img { width: 100%; height: 100%; object-fit: cover; }
 h1 {
@@ -177,12 +172,9 @@ h1 {
 .food-icon { font-size: 1.9rem; }
 .food-label { font-size: 0.8rem; font-weight: 600; color: #5a3a2a; }
 .final-img {
-  width: 120px; height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin: 0 auto 1.2rem;
-  display: block;
-  border: 3px solid #f2b8c0;
+  object-fit: contain;
+  background: #f0ede8;
+  padding: 8px;
 }
 .hearts-float {
   margin-top: 1rem; font-size: 1.2rem;
@@ -210,8 +202,7 @@ h1 {
 <div id="s1" class="screen active">
   <div class="card">
     <div class="cat-box">
-      <img src="https://cataas.com/cat?width=240&height=240" alt="gatinho"
-           onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3.5rem;\'>🐱</div>'">
+      <img src="gatinha.png" alt="gatinha">
     </div>
     <h1>🌸 Aceita jantar comigo?</h1>
     <p class="sub">sem pressão... mas tipo, aceita</p>
@@ -264,8 +255,7 @@ h1 {
 <!-- S4 -->
 <div id="s4" class="screen">
   <div class="card">
-    <img class="final-img" src="https://cataas.com/cat/cute?width=300&height=300" alt="gatinho"
-         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22><circle cx=%2260%22 cy=%2260%22 r=%2260%22 fill=%22%23f2b8c0%22/><text y=%2280%22 x=%2260%22 text-anchor=%22middle%22 font-size=%2260%22>🐱</text></svg>'">
+    <img class="final-img" src="gatinha.png" alt="gatinha">
     <h1 style="font-size:1.4rem;">Que bom que você não disse não. 🐾</h1>
     <p class="sub" style="margin-bottom:0.6rem;">Estarei lá para te buscar!</p>
     <p id="msgFinal" style="color:#5a1a2a;font-weight:600;font-size:0.95rem;margin-bottom:0.5rem;line-height:1.6;"></p>
