@@ -326,8 +326,8 @@ body {
   }
   for (let d = 1; d <= 31; d++) {
     const cell = document.createElement('div');
-    cell.className = 'cal-day' + (d === 5 ? ' special' : '');
-    cell.innerHTML = d + (d === 5 ? '<span class="star">⭐</span>' : '');
+    cell.className = 'cal-day' + (d === 4 ? ' special' : '');
+    cell.innerHTML = d + (d === 4 ? '<span class="star">⭐</span>' : '');
     cell.addEventListener('click', () => {
       document.querySelectorAll('.cal-day').forEach(c => c.classList.remove('selected-day'));
       cell.classList.add('selected-day');
@@ -442,4 +442,4 @@ let ty = 0;
   requestAnimationFrame(loop);
 </script>
 </body>
-</html> 
+</html>
