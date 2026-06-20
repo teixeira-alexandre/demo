@@ -233,7 +233,7 @@ body {
   <div class="card">
     <div style="font-size:2rem;margin-bottom:0.8rem;">📅🐾</div>
     <div class="cal-title">Então... quando você tá livre?</div>
-    <p class="cal-sub">Junho de 2026</p>
+    <p class="cal-sub">Julho de 2026</p>
     <div class="calendar-grid" id="cal"></div>
     <p class="hint">⭐ = data muito especial, por favor escolhe essa</p>
     <div style="margin-top:1.2rem; text-align:left;">
@@ -259,7 +259,7 @@ body {
       <div class="food-item" onclick="toggleFood(this,'Pizza')"><span class="food-icon">🍕</span><span class="food-label">Pizza</span></div>
       <div class="food-item" onclick="toggleFood(this,'Hambúrguer')"><span class="food-icon">🍔</span><span class="food-label">Hambúrguer</span></div>
       <div class="food-item" onclick="toggleFood(this,'Churrasco')"><span class="food-icon">🥩</span><span class="food-label">Churrasco</span></div>
-      <div class="food-item" onclick="toggleFood(this,'Japonês')"><span class="food-icon">🍣</span><span class="food-label">Japonês</span></div>
+      <div class="food-item" onclick="toggleFood(this,'Só drinks')"><span class="food-icon">🍹</span><span class="food-label">Só drinks</span></div>
       <div class="food-item" onclick="toggleFood(this,'Italiano')"><span class="food-icon">🍝</span><span class="food-label">Italiano</span></div>
       <div class="food-item" onclick="toggleFood(this,'Árabe')"><span class="food-icon">🥙</span><span class="food-label">Árabe</span></div>
     </div>
@@ -320,8 +320,11 @@ body {
     cal.appendChild(d);
   });
   let diaSelecionado = null;
-  const e = document.createElement('div'); e.className = 'cal-day empty'; cal.appendChild(e);
-  for (let d = 1; d <= 30; d++) {
+  // Julho 2026 começa na quarta-feira (índice 3)
+  for (let i = 0; i < 3; i++) {
+    const e = document.createElement('div'); e.className = 'cal-day empty'; cal.appendChild(e);
+  }
+  for (let d = 1; d <= 31; d++) {
     const cell = document.createElement('div');
     cell.className = 'cal-day' + (d === 5 ? ' special' : '');
     cell.innerHTML = d + (d === 5 ? '<span class="star">⭐</span>' : '');
@@ -357,9 +360,9 @@ body {
     const horario = document.getElementById('horarioSelect').value;
     const comida = [...foodSelected].join(', ');
     document.getElementById('msgFinal').textContent =
-      `📅 Dia ${diaSelecionado} de junho de 2026 às ${horario}\n🍽️ Vai rolar: ${comida}`;
+      `📅 Dia ${diaSelecionado} de julho de 2026 às ${horario}\n🍽️ Vai rolar: ${comida}`;
     emailjs.send('service_12jzg86', 'template_xlqeuz6', {
-      data: `${diaSelecionado} de junho de 2026`,
+      data: `${diaSelecionado} de julho de 2026`,
       horario,
       comida
     }).catch(err => console.warn('Erro email:', err));
